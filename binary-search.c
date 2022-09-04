@@ -1,53 +1,37 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include <stdlib.h>
+#include <math.h>
+
+int *get_search_arr_from_cli();
+
+bool search(int target, int nums[], int start, int end) {
 
 
-bool search(int nums[], int indexed_len, int needle) {
-
-    indexed_len /= 2;
-
-    if (nums[indexed_len] == needle) {
-        printf("your number is found at index : %i\n", indexed_len);
+    if (nums[start] == target) {
+        printf("target found at index : %i", start);
         return true;
     }
 
-    if (nums[indexed_len] < needle) {
-        for(int i = 1; i < 11; i++) {
-            if (nums[indexed_len - i] == needle) {
-                printf("your number is found at index : %i\n", indexed_len);
-                return true;
-            }
-        }
+
+    if (target < nums[start]) {
+        return search(target, nums, start / 2, start);
     }
 
-    if (nums[indexed_len] > needle) {
-        for(int i = 1; i < 11; i++) {
-            if (nums[indexed_len + i] == needle) {
-                printf("your number is found at index : %i\n", indexed_len);
-                return true;
-            }
-        }
+    if (target > nums[start]) {
+        return search(target, nums, start + (end - start) / 2, end);
     }
 
-    indexed_len = nums[indexed_len] < needle ? indexed_len/=2 : indexed_len + (indexed_len / 2);
+    printf("target not found");
+    return false;
 
-    return search(nums, indexed_len, needle);
 }
-
 
 int main(int argc, char* argv[]) {
 
-    if (argc < 2) {
-        printf("you need to write a number to search for\n");
-        return false;
-    }
+    int *nums = get_search_arr_from_cli(argc, argv);
 
-    int needle  = atoi(argv[1]); // converting the number from char to int
-    int nums[]      = {1,2,3,4,5,6,7,8,9,0};
-    
-    size_t nums_len = sizeof(nums) / sizeof(nums[0]);
+    int nums_len = sizeof(nums) / sizeof(nums[0]);
 
-    return search(nums, nums_len -1, needle);
-
+    return search(atoi(argv[1]), nums, nums_len / 2, nums_len);
 }
